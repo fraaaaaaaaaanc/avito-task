@@ -3,7 +3,7 @@ package main
 import "avito-tech/internal/app"
 
 func main() {
-	if err := app.Run(); err != nil {
+	if err := app.AppRun(); err != nil {
 		panic(err)
 	}
 }
