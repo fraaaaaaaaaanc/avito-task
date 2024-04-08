@@ -50,10 +50,10 @@ func newApp() (*app, error) {
 
 	app := &app{
 		flagsConf: flagsConf,
-		strg:      strg,
-		hl:        hl,
-		cookies:   cookies,
-		router:    router,
+		//strg:      strg,
+		hl:      hl,
+		cookies: cookies,
+		router:  router,
 	}
 
 	return app, nil

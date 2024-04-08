@@ -12,7 +12,16 @@ func NewRouter(hndlr *allHandlers.Handlers, cookies *cookie.Cookie) (chi.Router,
 	//r.Use(compress.MiddlewareCompress(),
 	//	logger.MiddlewareHandlerLog())
 
-	//r.Route("/api/user/", func(r chi.Router) {
+	r.Route("/user_banner", func(r chi.Router) {
+		r.Get("/", hndlr.GetUserBanner)
+	})
+
+	r.Route("/banner", func(r chi.Router) {
+		r.Get("/", hndlr.GetBanner)
+		r.Post("/", hndlr.PostBanner)
+		r.Patch("/{id}", hndlr.PatchBannerId)
+		r.Delete("/{id}", hndlr.DeleteBannerId)
+	})
 	//	r.Route("/orders", func(r chi.Router) {
 	//		r.With(cookies.MiddlewareCheckCookie()).Get("/", hndlr.GetOrders)
 	//		r.With(cookies.MiddlewareCheckCookie()).Post("/", hndlr.PostOrders)
