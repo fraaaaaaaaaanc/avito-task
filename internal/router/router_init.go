@@ -1,39 +1,28 @@
 package router
 
 import (
-	"avito-tech/internal/cookie"
 	allHandlers "avito-tech/internal/handlers/all_handlers"
+	"avito-tech/internal/token"
 	"github.com/go-chi/chi"
 )
 
-func NewRouter(hndlr *allHandlers.Handlers, cookies *cookie.Cookie) (chi.Router, error) {
+func NewRouter(hndlr *allHandlers.Handlers, token *token.TokenAccount) (chi.Router, error) {
 	r := chi.NewRouter()
 
-	//r.Use(compress.MiddlewareCompress(),
-	//	logger.MiddlewareHandlerLog())
-
 	r.Route("/user_banner", func(r chi.Router) {
-		r.Get("/", hndlr.GetUserBanner)
+		r.With(token.MiddlewareCheckToken()).Get("/", hndlr.GetUserBanner)
 	})
 
 	r.Route("/banner", func(r chi.Router) {
-		r.Get("/", hndlr.GetBanner)
-		r.Post("/", hndlr.PostBanner)
-		r.Patch("/{id}", hndlr.PatchBannerId)
-		r.Delete("/{id}", hndlr.DeleteBannerId)
+		r.With(token.MiddlewareCheckToken()).Get("/", hndlr.GetBanner)
+		r.With(token.MiddlewareCheckToken()).Post("/", hndlr.PostBanner)
+		r.With(token.MiddlewareCheckToken()).Patch("/{id:[0-9]+}", hndlr.PatchBannerId)
+		r.With(token.MiddlewareCheckToken()).Delete("/{id:[0-9]+}", hndlr.DeleteBannerId)
 	})
-	//	r.Route("/orders", func(r chi.Router) {
-	//		r.With(cookies.MiddlewareCheckCookie()).Get("/", hndlr.GetOrders)
-	//		r.With(cookies.MiddlewareCheckCookie()).Post("/", hndlr.PostOrders)
-	//	})
-	//
-	//	r.With(cookies.MiddlewareCheckCookie()).Get("/balance", hndlr.Balance)
-	//	r.With(cookies.MiddlewareCheckCookie()).Get("/withdrawals", hndlr.Withdrawals)
-	//
-	//	r.Post("/register", hndlr.Register)
-	//	r.Post("/login", hndlr.Login)
-	//	r.With(cookies.MiddlewareCheckCookie()).Post("/balance/withdraw", hndlr.WithDraw)
-	//})
+
+	r.Route("/login", func(r chi.Router) {
+		r.Get("/", hndlr.Login)
+	})
 
 	return r, nil
 }

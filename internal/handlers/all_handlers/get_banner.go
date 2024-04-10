@@ -2,22 +2,23 @@ package allHandlers
 
 import (
 	"avito-tech/internal/logger"
-	hlModel "avito-tech/internal/model/hanlders_model"
-	"fmt"
+	hlModel "avito-tech/internal/models/hanlders_models"
 	"github.com/gorilla/schema"
+	"go.uber.org/zap"
 	"net/http"
 )
 
 func (h *Handlers) GetBanner(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		logger.Error("Error parse query")
+		logger.Error("Error parse query", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	filter := new(hlModel.GetUserBannerModel)
-	if err := schema.NewDecoder().Decode(filter, r.Form); err != nil {
-		w.Write([]byte(fmt.Sprintf("%s", err)))
+	bannerModel := new(hlModel.GetBannerModel)
+	if err := schema.NewDecoder().Decode(bannerModel, r.Form); err != nil {
+		logger.Error("invalid request data format", zap.Error(err))
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-
-	// Do something with filter
-	fmt.Printf("%+v", filter)
 }

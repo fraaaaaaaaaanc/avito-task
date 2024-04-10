@@ -4,11 +4,11 @@ package app
 
 import (
 	"avito-tech/internal/config"
-	"avito-tech/internal/cookie"
 	"avito-tech/internal/handlers/all_handlers"
 	"avito-tech/internal/logger"
 	rt "avito-tech/internal/router"
 	mainStorage "avito-tech/internal/storage/main_storage"
+	"avito-tech/internal/token"
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
 	"net/http"
@@ -16,11 +16,11 @@ import (
 
 type app struct {
 	//TODO описать струткуру
-	flagsConf *config.Flags
-	hl        *allHandlers.Handlers
-	strg      *mainStorage.Storage
-	cookies   *cookie.Cookie
-	router    chi.Router
+	flagsConf    *config.Flags
+	hl           *allHandlers.Handlers
+	strg         *mainStorage.Storage
+	tokenAccount *token.TokenAccount
+	router       chi.Router
 }
 
 func newApp() (*app, error) {
@@ -38,11 +38,11 @@ func newApp() (*app, error) {
 		return nil, err
 	}
 
-	cookies := cookie.NewCookie(flagsConf.SecretKeyJWTToken)
+	tokenAccount := token.NewTokenAccount(flagsConf.SecretKeyJWTToken)
 
-	hl := allHandlers.NewHandlers(strg, cookies)
+	hl := allHandlers.NewHandlers(strg, tokenAccount)
 
-	router, err := rt.NewRouter(hl, cookies)
+	router, err := rt.NewRouter(hl, tokenAccount)
 	if err != nil {
 		logger.Error("error creating the Router object", zap.Error(err))
 		return nil, err
@@ -51,9 +51,9 @@ func newApp() (*app, error) {
 	app := &app{
 		flagsConf: flagsConf,
 		//strg:      strg,
-		hl:      hl,
-		cookies: cookies,
-		router:  router,
+		hl:           hl,
+		tokenAccount: tokenAccount,
+		router:       router,
 	}
 
 	return app, nil
@@ -69,6 +69,8 @@ func AppRun() error {
 	if err != nil {
 		return err
 	}
+	logger.Info("Server start", zap.String("Running server on", app.flagsConf.String()))
 	err = http.ListenAndServe(app.flagsConf.String(), app.router)
+	logger.Error("Error run server", zap.Error(err))
 	return err
 }

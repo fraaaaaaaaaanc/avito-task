@@ -5,5 +5,4 @@ type PostBannerModel struct {
 	FeatureId int                `json:"feature_id,omitempty"`
 	IsActive  bool               `json:"is_active,omitempty"`
 	Content   BannerContentModel `json:"content,omitempty"`
-	Token     string
 }

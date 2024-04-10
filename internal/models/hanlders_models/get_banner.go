@@ -5,5 +5,4 @@ type GetBannerModel struct {
 	FeatureId int `schema:"feature_id,omitempty"`
 	Limit     int `schema:"limit,omitempty"`
 	Offset    int `schema:"offset,omitempty"`
-	Token     string
 }
