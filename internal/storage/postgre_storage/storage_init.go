@@ -1,14 +1,15 @@
-package mainStorage
+package postgreStorage
 
 import (
+	"avito-tech/internal/storage"
 	"database/sql"
 )
 
-type Storage struct {
+type PostgreStorage struct {
 	db *sql.DB
 }
 
-func NewStorage(storageDBAddress string) (*Storage, error) {
+func NewStorage(storageDBAddress string) (storage.StorageBanner, error) {
 	//db, err := sql.Open("pgx", storageDBAddress)
 	//if err != nil {
 	//	logger.Error("error connect to the database", zap.Error(err))
@@ -28,7 +29,7 @@ func NewStorage(storageDBAddress string) (*Storage, error) {
 	//if err != nil {
 	//	return nil, err
 	//}
-	return &Storage{
+	return &PostgreStorage{
 		//db: db,
 	}, nil
 }

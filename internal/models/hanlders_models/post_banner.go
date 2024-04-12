@@ -6,3 +6,7 @@ type PostBannerModel struct {
 	IsActive  bool               `json:"is_active,omitempty"`
 	Content   BannerContentModel `json:"content,omitempty"`
 }
+
+type ResponsePostBannerModel struct {
+	BannerID int `json:"banner_id"`
+}

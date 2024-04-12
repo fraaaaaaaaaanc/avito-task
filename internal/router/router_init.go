@@ -10,18 +10,19 @@ func NewRouter(hndlr *allHandlers.Handlers, token *token.TokenAccount) (chi.Rout
 	r := chi.NewRouter()
 
 	r.Route("/user_banner", func(r chi.Router) {
-		r.With(token.MiddlewareCheckToken()).Get("/", hndlr.GetUserBanner)
+		r.With(token.MiddlewareCheckToken()).Get("/", hndlr.GetUserBannerHandler)
 	})
 
 	r.Route("/banner", func(r chi.Router) {
-		r.With(token.MiddlewareCheckToken()).Get("/", hndlr.GetBanner)
-		r.With(token.MiddlewareCheckToken()).Post("/", hndlr.PostBanner)
-		r.With(token.MiddlewareCheckToken()).Patch("/{id:[0-9]+}", hndlr.PatchBannerId)
-		r.With(token.MiddlewareCheckToken()).Delete("/{id:[0-9]+}", hndlr.DeleteBannerId)
+		r.With(token.MiddlewareCheckToken()).Get("/", hndlr.GetBannerHandler)
+		r.With(token.MiddlewareCheckToken()).Post("/", hndlr.PostBannerHandler)
+		r.With(token.MiddlewareCheckToken()).Patch("/{id:[0-9]+}", hndlr.PatchBannerIdHandler)
+		r.With(token.MiddlewareCheckToken()).Delete("/{id:[0-9]+}", hndlr.DeleteBannerIdHandler)
+		r.With(token.MiddlewareCheckToken()).Get("/versions/{id:[0-9]+}", hndlr.GetVersionBannerHandler)
 	})
 
 	r.Route("/login", func(r chi.Router) {
-		r.Get("/", hndlr.Login)
+		r.Get("/", hndlr.LoginHandler)
 	})
 
 	return r, nil

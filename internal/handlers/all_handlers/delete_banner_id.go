@@ -2,25 +2,39 @@ package allHandlers
 
 import (
 	"avito-tech/internal/logger"
-	hlModel "avito-tech/internal/models/hanlders_models"
-	"fmt"
+	storageModels "avito-tech/internal/models/storage_model"
+	"errors"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-func (h *Handlers) DeleteBannerId(w http.ResponseWriter, r *http.Request) {
-	stringId := strings.Split(r.URL.Path, "/")[2]
-	id, err := strconv.Atoi(stringId)
+func (h *Handlers) DeleteBannerIdHandler(w http.ResponseWriter, r *http.Request) {
+	stringIdBanner := strings.Split(r.URL.Path, "/")[2]
+	idBanner, err := strconv.Atoi(stringIdBanner)
 	if err != nil {
-		logger.Error("invalid id parameter value", zap.Error(err))
+		logger.Error("invalid request data format", zap.Error(err))
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write(h.errorIncorrectData)
 		return
 	}
-	deleteBannerModel := hlModel.DeleteBannerModel{
-		Id: id,
+
+	err = h.strg.DelBanner(idBanner)
+	if err != nil && !errors.Is(err, storageModels.ErrBannerNotFound) {
+		logger.Error("error working with the database", zap.Error(err))
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(h.errorInternalServer)
+		return
+	} else if errors.Is(err, storageModels.ErrBannerNotFound) {
+		logger.Error("no data was found")
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
-	fmt.Println(deleteBannerModel)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
+	logger.Info("handler /banner/{id} worked correctly, the status 200 was received")
 }

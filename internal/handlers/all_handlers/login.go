@@ -3,42 +3,23 @@ package allHandlers
 import (
 	"avito-tech/internal/logger"
 	tokenModels "avito-tech/internal/models/token_models"
-	"avito-tech/internal/token"
 	"encoding/json"
 	"go.uber.org/zap"
 	"net/http"
 )
 
 // TODO: объяснить почему тут повторяющийся код и назвать причину по которой я его не убрал
-func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
-	accountName := r.Header.Get("accountName")
+func (h *Handlers) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	accountName := r.URL.Query().Get("accountName")
 
-	var resultToken tokenModels.ResultToken
-	switch accountName {
-	case "user":
-		token, err := h.tokenAccount.NewAccountToken(accountName)
-		if err != nil {
-			logger.Error("error when creating a token during authorization for user", zap.Error(err))
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		resultToken = tokenModels.ResultToken{
-			Token: token,
-		}
-	case "admin":
-		token, err := h.tokenAccount.NewAccountToken(accountName)
-		if err != nil {
-			logger.Error("error when creating a token during authorization for admin", zap.Error(err))
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		resultToken = tokenModels.ResultToken{
-			Token: token,
-		}
-	default:
-		logger.Error("the non-existent value of the account parameter")
+	token, err := h.tokenAccount.NewAccountToken(accountName)
+	if err != nil {
+		logger.Error("error when creating a token during authorization for user", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+	resultToken := tokenModels.ResultToken{
+		Token: token,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -50,19 +31,5 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-}
-
-func getToken(tokenAccount *token.TokenAccount, w http.ResponseWriter,
-	accountName string) (*tokenModels.ResultToken, error) {
-	token, err := tokenAccount.NewAccountToken(accountName)
-	if err != nil {
-		http.Error(w, "error creating the token", http.StatusInternalServerError)
-		logger.Error("error when creating a token during authorization", zap.Error(err))
-		return nil, err
-	}
-	resultToken := &tokenModels.ResultToken{
-		Token: token,
-	}
-
-	return resultToken, nil
+	logger.Info("handler /login worked correctly, the status 200 was received")
 }

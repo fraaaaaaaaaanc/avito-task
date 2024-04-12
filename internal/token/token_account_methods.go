@@ -27,7 +27,17 @@ func (t TokenAccount) buildJwtString(accountName string) (string, error) {
 	return tokenString, nil
 }
 
+func (t TokenAccount) validRole(accountName string) error {
+	if _, ok := t.roles[accountName]; !ok {
+		return cookieModels.ErrRoleIsNotValid
+	}
+	return nil
+}
+
 func (t TokenAccount) NewAccountToken(accountName string) (string, error) {
+	if err := t.validRole(accountName); err != nil {
+		return "", err
+	}
 	tokenString, err := t.buildJwtString(accountName)
 	if err != nil {
 		return "", err
@@ -73,6 +83,7 @@ func (t TokenAccount) MiddlewareCheckToken() func(h http.Handler) http.Handler {
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
+			logger.Info(fmt.Sprintf("%s successfully processed in middleware for %s", accountName, r.URL.Path))
 
 			h.ServeHTTP(w, r)
 		})
