@@ -1,20 +1,11 @@
-FROM golang:latest
+FROM golang:1.22 as build
 
-RUN go version
+WORKDIR /app
 
-COPY . /avitoTech/
-WORKDIR /avitoTech/
+COPY . .
 
-# build go app
-RUN go mod download
-RUN GOOS=linux go build -o app ./cmd/main.go
+EXPOSE 8080
 
-# install psql
-RUN apt-get update
-RUN apt-get -y install postgresql-client
+RUN make build-banner
 
-# make wait-for-postgres.sh executable
-RUN sed -i -e 's/\r$//' *.sh
-RUN chmod +x wait_pg.sh
-
-CMD ["./app"]
+ENTRYPOINT /app/server

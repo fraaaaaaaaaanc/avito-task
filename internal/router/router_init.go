@@ -1,30 +1,32 @@
 package router
 
 import (
-	"avito-tech/internal/cookie"
+	"avito-tech/internal/caches"
 	allHandlers "avito-tech/internal/handlers/all_handlers"
+	"avito-tech/internal/token"
+
 	"github.com/go-chi/chi"
 )
 
-func NewRouter(hndlr *allHandlers.Handlers, cookies *cookie.Cookie) (chi.Router, error) {
+func NewRouter(hndlr *allHandlers.Handlers, token *token.TokenAccount, redis *caches.Cache) (chi.Router, error) {
 	r := chi.NewRouter()
 
-	//r.Use(compress.MiddlewareCompress(),
-	//	logger.MiddlewareHandlerLog())
+	r.Route("/user_banner", func(r chi.Router) {
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Get("/", hndlr.GetUserBannerHandler)
+	})
 
-	//r.Route("/api/user/", func(r chi.Router) {
-	//	r.Route("/orders", func(r chi.Router) {
-	//		r.With(cookies.MiddlewareCheckCookie()).Get("/", hndlr.GetOrders)
-	//		r.With(cookies.MiddlewareCheckCookie()).Post("/", hndlr.PostOrders)
-	//	})
-	//
-	//	r.With(cookies.MiddlewareCheckCookie()).Get("/balance", hndlr.Balance)
-	//	r.With(cookies.MiddlewareCheckCookie()).Get("/withdrawals", hndlr.Withdrawals)
-	//
-	//	r.Post("/register", hndlr.Register)
-	//	r.Post("/login", hndlr.Login)
-	//	r.With(cookies.MiddlewareCheckCookie()).Post("/balance/withdraw", hndlr.WithDraw)
-	//})
+	r.Route("/banner", func(r chi.Router) {
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Get("/", hndlr.GetBannerHandler)
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Post("/", hndlr.PostBannerHandler)
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Patch("/{id:[0-9]+}", hndlr.PatchBannerIdHandler)
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Delete("/{id:[0-9]+}", hndlr.DeleteBannerIdHandler)
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Get("/versions/{id:[0-9]+}", hndlr.GetVersionBannerHandler)
+		r.With(token.MiddlewareCheckToken(), redis.CacheMiddleware).Delete("/featueortag/{id:[0-9]+}", hndlr.GetVersionBannerHandler)
+	})
+
+	r.Route("/login", func(r chi.Router) {
+		r.Get("/", hndlr.LoginHandler)
+	})
 
 	return r, nil
 }
