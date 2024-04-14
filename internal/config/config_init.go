@@ -12,6 +12,7 @@ const (
 	addrDB      = "host=localhost password=1234 dbname=gofermart user=postgres sslmode=disable"
 	accrualSA   = "http://localhost:8080"
 	logLvlLocal = "local"
+	redisURL = "chaches:6379"
 )
 
 type Flags struct {
@@ -20,6 +21,7 @@ type Flags struct {
 	LogFilePath          string
 	ProjLvl              string
 	DataBaseURI          string
+	RedisURL string
 	HTTPServerHost
 }
 

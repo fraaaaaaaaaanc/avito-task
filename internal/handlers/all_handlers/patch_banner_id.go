@@ -33,7 +33,7 @@ func (h *Handlers) PatchBannerIdHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	patchBannerModel.Id = bannerId
 
-	err = h.strg.PatchBanner(&patchBannerModel)
+	err = h.strg.PatchBanner(r.Context(), &patchBannerModel)
 	if err != nil && !errors.Is(err, storageModels.ErrBannerNotFound) {
 		logger.Error("error working with the database", zap.Error(err))
 		w.Header().Set("Content-Type", "application/json")

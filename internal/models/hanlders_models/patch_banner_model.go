@@ -1,9 +1,9 @@
 package hlModel
 
 type PatchBannerModel struct {
-	TagIds    []int              `json:"tag_ids,omitempty"`
-	FeatureId int                `json:"feature_id,omitempty"`
-	Content   BannerContentModel `json:"content,omitempty"`
-	IsActive  bool               `json:"is_active,omitempty"`
-	Id        int
+	TagIds    []int              `json:"tag_ids,required"`
+	FeatureId int                `json:"feature_id,required"`
+	Content   BannerContentModel `json:"content,required"`
+	IsActive  bool               `json:"is_active,required"`
+	Id        uint32
 }

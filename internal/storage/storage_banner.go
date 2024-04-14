@@ -8,10 +8,11 @@ import (
 
 type StorageBanner interface {
 	GetUserBanner(context.Context, hlModel.GetUserBannerModel) (*hlModel.BannerContentModel, error)
-	GetBanner(context.Context, hlModel.GetBannerModel) (*hlModel.ResponseBannerModel, error)
+	GetBanner(context.Context, hlModel.GetBannerModel) (string, error)
 	GetVersionBanner(context.Context, int) (*[]hlModel.ResponseBannerModel, error)
-	SetBanner(context.Context, hlModel.PostBannerModel) (*hlModel.ResponsePostBannerModel, error)
+	SetBanner(context.Context, *hlModel.PostBannerModel) (uint32, error)
 	PatchBanner(context.Context, *hlModel.PatchBannerModel) error
 	DelBanner(context.Context, int) error
-	DelBannerFeatureOrTag(ctx context.Context, tagChan []storageModels.DelFeatureOrTagChan) error
+	DelBannerFeatureOrTag(context.Context, []storageModels.DelFeatureOrTagChan) error
+	CloseDB()
 }

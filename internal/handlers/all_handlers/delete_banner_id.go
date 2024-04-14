@@ -21,7 +21,7 @@ func (h *Handlers) DeleteBannerIdHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = h.strg.DelBanner(idBanner)
+	err = h.strg.DelBanner(r.Context(), idBanner)
 	if err != nil && !errors.Is(err, storageModels.ErrBannerNotFound) {
 		logger.Error("error working with the database", zap.Error(err))
 		w.Header().Set("Content-Type", "application/json")

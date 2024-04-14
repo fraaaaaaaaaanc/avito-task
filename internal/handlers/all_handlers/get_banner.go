@@ -27,7 +27,7 @@ func (h *Handlers) GetBannerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respBannerModel, err := h.strg.GetBanner(*bannerModel)
+	respBannerModel, err := h.strg.GetBanner(r.Context(), *bannerModel)
 	if err != nil {
 		logger.Error("error working with the database", zap.Error(err))
 		w.Header().Set("Content-Type", "application/json")

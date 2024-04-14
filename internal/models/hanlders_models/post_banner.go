@@ -1,10 +1,10 @@
 package hlModel
 
 type PostBannerModel struct {
-	TagIds    []int              `json:"tag_ids,omitempty"`
-	FeatureId int                `json:"feature_id,omitempty"`
-	IsActive  bool               `json:"is_active,omitempty"`
-	Content   BannerContentModel `json:"content,omitempty"`
+	TagIds    []uint32              `json:"tag_ids,required"`
+	FeatureId int                `json:"feature_id,required"`
+	IsActive  bool               `json:"is_active,required"`
+	Content   BannerContentModel `json:"content,required"`
 }
 
 type ResponsePostBannerModel struct {

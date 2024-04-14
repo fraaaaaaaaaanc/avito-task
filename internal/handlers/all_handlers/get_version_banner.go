@@ -30,7 +30,7 @@ func (h *Handlers) GetVersionBannerHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	bannerVersions, err := h.strg.GetVersionBanner(bannerId)
+	bannerVersions, err := h.strg.GetVersionBanner(r.Context(), bannerId)
 	if err != nil && !errors.Is(err, storageModels.ErrBannerNotFound) {
 		logger.Error("error working with the database", zap.Error(err))
 		w.Header().Set("Content-Type", "application/json")

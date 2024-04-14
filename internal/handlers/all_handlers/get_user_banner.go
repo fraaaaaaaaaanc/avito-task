@@ -29,7 +29,7 @@ func (h *Handlers) GetUserBannerHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	bannerContentModel, err := h.strg.GetUserBanner(*userBannerModel)
+	bannerContentModel, err := h.strg.GetUserBanner(r.Context(), *userBannerModel)
 	if err != nil && !errors.Is(err, storageModels.ErrBannerNotFound) {
 		logger.Error("error working with the database", zap.Error(err))
 		w.Header().Set("Content-Type", "application/json")
@@ -42,16 +42,15 @@ func (h *Handlers) GetUserBannerHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	if err = enc.Encode(bannerContentModel); err != nil {
 		logger.Error("error forming the response body", zap.Error(err))
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(h.errorInternalServer)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	logger.Info("handler /user_banner worked correctly, the status 200 was received")
 }

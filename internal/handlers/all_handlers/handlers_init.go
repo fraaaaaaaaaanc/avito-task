@@ -12,6 +12,7 @@ type Handlers struct {
 	tokenAccount        *token.TokenAccount
 	errorIncorrectData  []byte
 	errorInternalServer []byte
+	// delQueryChan chan storageModels.DeleteBannerFeatureOrTagModel
 }
 
 func NewHandlers(storage storage.StorageBanner, tokenAccount *token.TokenAccount) (*Handlers, error) {
@@ -28,5 +29,6 @@ func NewHandlers(storage storage.StorageBanner, tokenAccount *token.TokenAccount
 		tokenAccount:        tokenAccount,
 		errorIncorrectData:  errorIncorrectData,
 		errorInternalServer: errorInternalServer,
+		// delQueryChan: delQueryChan, 
 	}, nil
 }

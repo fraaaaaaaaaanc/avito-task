@@ -84,8 +84,6 @@ func (t TokenAccount) MiddlewareCheckToken() func(h http.Handler) http.Handler {
 				return
 			}
 			logger.Info(fmt.Sprintf("%s successfully processed in middleware for %s", accountName, r.URL.Path))
-
-			h.ServeHTTP(w, r)
 		})
 	}
 }
